@@ -1,0 +1,3 @@
+# Module nm_code
+# RPC service class, partial path of RPC policy file
+com.example.nmcode.client.GreetingService, 1E2BD4610B6BB276A340B714CAC7D795.gwt.rpc

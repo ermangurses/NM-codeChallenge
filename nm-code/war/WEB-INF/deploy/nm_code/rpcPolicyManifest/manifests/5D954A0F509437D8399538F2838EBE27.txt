@@ -1,0 +1,2 @@
+serviceClass: com.example.nmcode.client.GreetingService
+path: 1E2BD4610B6BB276A340B714CAC7D795.gwt.rpc
