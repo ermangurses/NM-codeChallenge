@@ -31,7 +31,7 @@ public class Nm_code implements EntryPoint {
     /**
      * Create a remote service proxy to talk to the server-side Greeting service.
      */
-    private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+    private final ConnectionServiceAsync connectionService = GWT.create(ConnectionService.class);
 
     /**
      * This is the entry point method.
@@ -39,7 +39,7 @@ public class Nm_code implements EntryPoint {
     public void onModuleLoad() {
         final Button sendButton = new Button("Send");
         final TextBox nameField = new TextBox();
-        nameField.setText("GWT User");
+        nameField.setText("Keyword Here!");
         final Label errorLabel = new Label();
 
         // We can add style names to widgets
@@ -117,7 +117,7 @@ public class Nm_code implements EntryPoint {
                 sendButton.setEnabled(false);
                 textToServerLabel.setText(textToServer);
                 serverResponseLabel.setText("");
-                greetingService.greetServer(textToServer, new AsyncCallback<String>() {
+                connectionService.searchSynonyms(textToServer, new AsyncCallback<String>() {
                     public void onFailure(Throwable caught) {
                         // Show the RPC error message to the user
                         dialogBox.setText("Remote Procedure Call - Failure");

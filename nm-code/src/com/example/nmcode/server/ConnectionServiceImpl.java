@@ -1,6 +1,6 @@
 package com.example.nmcode.server;
 
-import com.example.nmcode.client.GreetingService;
+import com.example.nmcode.client.ConnectionService;
 import com.example.nmcode.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -8,9 +8,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * The server-side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-public class GreetingServiceImpl extends RemoteServiceServlet implements GreetingService {
+public class ConnectionServiceImpl extends RemoteServiceServlet implements ConnectionService {
 
-    public String greetServer(String input) throws IllegalArgumentException {
+    public String searchSynonyms(String input) throws IllegalArgumentException {
         // Verify that the input is valid. 
         if (!FieldVerifier.isValidName(input)) {
             // If the input is not valid, throw an IllegalArgumentException back to
@@ -42,4 +42,5 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
         return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
+
 }
