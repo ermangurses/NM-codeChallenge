@@ -180,28 +180,22 @@ public class Nm_code implements EntryPoint {
     /**
      * The skeleton interface for the word processor
      */ 
-    public Widget wordEditorInterface() {
-        
-         verticalPanel = new VerticalPanel();
-         verticalPanel.setWidth("100%");
-         verticalPanel.setHeight("300%");
+    public void wordEditorInterface() {
          
          areaLeft = new RichTextArea();
          areaRight = new RichTextArea();
          areaLeft.setVisible(false);
-         areaRight.setVisible(false);
-            
+         areaRight.setVisible(false);            
          RootPanel.get().add(areaLeft); 
          
-       return verticalPanel;
     }
     /**
-     * The RPC call that calls loadMap method
-     * loadMap calls mapLabelsToExactSynonyms method
-     * 
-     * callMappingLabelsToExactSynonyms:
+     * The RPC call that calls mapLabelsToSynonyms method
+     *
+     *
+     * callMaplabelsToSynonyms:
      * Place each label(key) into hash map. 
-     * Each label has a list (value) that contains the exact synonyms
+     * Each label has a list (value) that contains the all synonyms
      */ 
     private void initServerSide() {
         connectionService.callMaplabelsToSynonyms(new AsyncCallback<Boolean>() {

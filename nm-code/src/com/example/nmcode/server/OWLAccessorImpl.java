@@ -74,7 +74,7 @@ public class OWLAccessorImpl implements OWLAccessor {
     
     /**
      * Place each label (key) into hash map. 
-     * Each label has a list (value) that contains the exact synonyms
+     * Each label has a list (value) that contains all synonyms
      */  
     @SuppressWarnings("deprecation")
     public boolean mapLabelsToSynonyms() {
@@ -114,7 +114,7 @@ public class OWLAccessorImpl implements OWLAccessor {
     }
  
     /**
-     * Return exact synonyms given a term
+     * Return all synonyms given term
      */  
     public List<String> getSynonymsfromMap(String token) {
         System.out.println(hashMap.get(token).toString());   
