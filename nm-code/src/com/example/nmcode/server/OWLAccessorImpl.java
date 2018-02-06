@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -77,9 +77,9 @@ public class OWLAccessorImpl implements OWLAccessor {
      * Each label has a list (value) that contains the exact synonyms
      */  
     @SuppressWarnings("deprecation")
-    public boolean mapLabelsToExactSynonyms() {
+    public boolean mapLabelsToSynonyms() {
         
-        Iterator<OWLAnnotation> iterKey; 
+       Iterator<OWLAnnotation> iterKey; 
         String key, value;
      
         for (OWLClass cls : ont.getClassesInSignature()) {
@@ -90,8 +90,16 @@ public class OWLAccessorImpl implements OWLAccessor {
 
             if (iterKey.hasNext()) {
                 key  = getRefinedOutput(iterKey.next().toString());
-                Set<OWLAnnotation> set = getExactSynonyms(getClassByLabel(key));
-                Iterator<OWLAnnotation> iterValue = set.iterator();
+                Set<OWLAnnotation> setExact  = getExactSynonyms(getClassByLabel(key));
+                Set<OWLAnnotation> setRelated = getRelatedSynonyms(getClassByLabel(key));
+                Set<OWLAnnotation> setBroad   = getBroadSynonyms(getClassByLabel(key));
+
+                Set<OWLAnnotation> setAll = new TreeSet<OWLAnnotation>();
+                setAll.addAll(setExact);
+                setAll.addAll(setRelated);
+                setAll.addAll(setBroad);
+                
+                Iterator<OWLAnnotation> iterValue = setAll.iterator();
                 List<String> synyoyms = new ArrayList<String>();    
 
                 while(iterValue.hasNext()) {
@@ -108,8 +116,7 @@ public class OWLAccessorImpl implements OWLAccessor {
     /**
      * Return exact synonyms given a term
      */  
-    public List<String> getExactSynonymsfromMap(String token) {
-        
+    public List<String> getSynonymsfromMap(String token) {
         System.out.println(hashMap.get(token).toString());   
      return hashMap.get(token); 
     }
@@ -153,8 +160,42 @@ public class OWLAccessorImpl implements OWLAccessor {
          return origin.replaceAll("\\^\\^xsd:string", "").replaceAll("\"", "")
         .replaceAll("\\.", "");
     }
- 
- 
+     
+    /**
+     * Return the exact synonyms of a term represented by an OWLClass object.
+     */
+    public Set<OWLAnnotation> getExactSynonyms(OWLClass c) {
+         return EntitySearcher.getAnnotations(c,ont,df.getOWLAnnotationProperty(IRI
+         .create("http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"))).collect(Collectors.toSet()); 
+    }
+    
+    /**
+     * Return the related synonyms of a term represented by an OWLClass object.
+     */
+    public Set<OWLAnnotation> getRelatedSynonyms(OWLClass c) {
+         return EntitySearcher.getAnnotations(c,ont,df.getOWLAnnotationProperty(IRI
+         .create("http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym"))).collect(Collectors.toSet()); 
+    }
+    
+    /**
+     * Return the broad synonyms of a term represented by an OWLClass object.
+     */
+    public Set<OWLAnnotation> getBroadSynonyms(OWLClass c) {
+         return EntitySearcher.getAnnotations(c,ont,df.getOWLAnnotationProperty(IRI
+         .create("http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym"))).collect(Collectors.toSet()); 
+    } 
+    
+    /**
+     * Return all classes in the Ontology
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public Set<OWLClass> getAllClasses() {
+        // TODO Auto-generated method stub
+        return ont.getClassesInSignature();
+    }
+    
+    
     /**
     * Return OWLClass given a label
     */ 
@@ -168,55 +209,6 @@ public class OWLAccessorImpl implements OWLAccessor {
             }
         }
         return null;
-    }
- 
-    /**
-     * Return OWLClass ID given OWLClass
-     */ 
-    @Override
-    public String getID(OWLClass c){
-         
-        Set<OWLAnnotation> ids = (Set<OWLAnnotation>) EntitySearcher.getAnnotations(c,ont,df.getOWLAnnotationProperty(IRI
-        .create("http://purl.obolibrary.org/obo/#id"))).collect(Collectors.toSet());
-        
-        if(ids.isEmpty()){
-             // if there is no id, return empty string
-            return "";
-        }else{
-            return this.getRefinedOutput(((OWLAnnotation)ids.toArray()[0]).toString());
-        }
-    }
-    
-    /**
-     * Return the exact synonyms of a term represented by an OWLClass object.
-     */
-    public Set<OWLAnnotation> getExactSynonyms(OWLClass c) {
-         return EntitySearcher.getAnnotations(c,ont,df.getOWLAnnotationProperty(IRI
-         .create("http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"))).collect(Collectors.toSet()); 
-    }
-     
-    /**
-     * Return all classes in the Ontology
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public Set<OWLClass> getAllClasses() {
-        // TODO Auto-generated method stub
-        return ont.getClassesInSignature();
-    }
-    
-    /**
-     * 
-     */ 
-    public Set<OWLClass> getClassesUseSynonyms (String exactSynonym){
-        Set<OWLClass> set = null;
-        for(Entry<String, List<String>> entry : hashMap.entrySet()){ 
-            if(entry.getValue().contains(exactSynonym)) {
-                //set.add(getClassByLabel(entry.getKey()));                    
-                System.out.printf("getClassByLabel(entry.getKey()) : %s\n", getClassByLabel(entry.getKey()).toString());
-            }         
-        }    
-        return set;
     }
     
     /**
@@ -269,4 +261,10 @@ public class OWLAccessorImpl implements OWLAccessor {
      // TODO Auto-generated method stub
       return null;
      }
+    
+    @Override
+    public String getID(OWLClass c) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
